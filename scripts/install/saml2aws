@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing saml2aws..."
+
+if is_callable_from_path "saml2aws"; then 
+    log_info "\tsaml2aws already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        CURRENT_VERSION=$(curl -Ls https://api.github.com/repos/Versent/saml2aws/releases/latest | grep 'tag_name' | cut -d'v' -f2 | cut -d'"' -f1)
+        wget -c https://github.com/Versent/saml2aws/releases/download/v${CURRENT_VERSION}/saml2aws_${CURRENT_VERSION}_linux_amd64.tar.gz -O - | tar -xzv -C ~/.local/bin
+        chmod u+x ~/.local/bin/saml2aws
+        hash -r
+
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install saml2aws
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing saml2aws...DONE!"

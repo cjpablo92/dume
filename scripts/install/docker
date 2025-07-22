@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing docker..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    # echo "unsupported tool for LINUX"
+    # TODO: check if wget is installed (sudo apt install wget)
+    if is_callable_from_path "docker"; then 
+        log_info "\tdocker already installed"
+    else 
+        log_warn "TODO - docker linux installation not yet supported by scripts"
+    fi
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if is_callable_from_path "docker"; then 
+        log_info "\tdocker already installed"
+    else 
+        brew install --cask docker
+        brew install docker
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing docker...DONE!"

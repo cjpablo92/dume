@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing google chrome..."
+
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if is_callable_from_path "google-chrome-stable"; then 
+        log_info "\tchrome already installed"
+    else 
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt update
+        sudo apt install google-chrome-stable
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if [ -d "$HOME/Library/Application Support/Google/Chrome" ]; then
+        log_info "\tchrome already installed"
+    elif is_apple_silicon; then
+        curl https://dl.google.com/chrome/mac/universal/stable/CHFA/googlechrome.dmg
+        open ~/Downloads/googlechrome.dmg
+        sudo cp -r /Volumes/Google\ Chrome/Google\ Chrome.app /Applications/
+    else
+        wget https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg
+        open ~/Downloads/googlechrome.dmg
+        sudo cp -r /Volumes/Google\ Chrome/Google\ Chrome.app /Applications/
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+
+log_info "installing google chrome...DONE!"

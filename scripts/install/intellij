@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing intellij..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if is_callable_from_path "intellij-idea-ultimate"; then 
+        log_info "\tintellij already installed"
+    else 
+        sudo snap install intellij-idea-ultimate --classic
+    fi
+    
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if [ -d "/Applications/IntelliJ IDEA.app" ]; then
+        log_info "\tintellij already installed" 
+    else
+        brew install --cask intellij-idea
+    fi
+    
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing intellij...DONE!"

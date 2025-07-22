@@ -1,0 +1,46 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing rbenv..."
+
+if is_callable_from_path "rbenv"; then 
+    log_info "\trbenv already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm5 libgdbm-dev
+        git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+        echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc #if you use zsh in linux, change this to ~/zshrc
+        echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+        source ~/.bashrc
+        # install ruby-build to install ruby versions
+        git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+        rbenv install 2.7.2
+        rbenv global 2.7.2
+        curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-doctor | bash
+        source $HOME/.bashrc
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install ruby-build rbenv
+        if is_apple_silicon; then
+            # Should modify to a working version of openssl (not the default one that has issues with arm64)
+            brew install openssl
+            echo 'export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"' >> $HOME/.zshrc
+        fi
+        echo 'eval "$(rbenv init -)"' >> $HOME/.zshrc
+        eval "$(rbenv init -)"
+        rbenv install 2.7.2
+        rbenv global 2.7.2
+        source $HOME/.zshrc
+        # This will display information about the installation, in order to debug if something faiiled
+        curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-doctor | bash
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing rbenv...DONE!"

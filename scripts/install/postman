@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+
+log_info "installing postman ..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if is_callable_from_path "postman"; then 
+        log_info "\tpostman already installed" 
+    else
+        sudo snap install postman --classic
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if [ -d "$HOME/Library/Application Support/Postman" ]; then
+        log_info "\tpostman already installed..."
+    else
+        brew install --cask postman
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing postman...DONE!"

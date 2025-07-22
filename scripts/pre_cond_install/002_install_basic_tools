@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing basic console tools (curl, wget, jq) ..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX 
+    if is_callable_from_path "curl"; then
+        log_info "\tcurl already installed" 
+    else 
+        sudo apt install curl
+    fi
+
+    if is_callable_from_path "wget"; then
+        log_info "\twget already installed" 
+    else 
+        sudo apt install wget
+    fi
+
+    if is_callable_from_path "jq"; then
+        log_info "\tjq already installed" 
+    else 
+        sudo apt install jq
+    fi
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if is_callable_from_path "curl"; then
+        log_info "\tcurl already installed" 
+    else 
+        brew install curl
+    fi
+
+    if is_callable_from_path "wget"; then
+        log_info "\twget already installed" 
+    else 
+        brew install wget
+    fi
+
+    if is_callable_from_path "jq"; then
+        log_info "\tjq already installed" 
+    else 
+        brew install jq
+    fi
+
+else
+    log_error "\tunsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing basic console tools (curl, wget, jq) ... DONE!"

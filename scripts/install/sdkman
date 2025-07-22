@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing sdkman..."
+
+# TODO - workaround to be able to check if sdk man is actually installed
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+
+if is_callable_from_path "sdk"; then
+    log_info "\tsdkman already installed" 
+else
+    if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "darwin"* ]]; then
+        curl -s "https://get.sdkman.io" -s | bash 
+        source "$HOME/.sdkman/bin/sdkman-init.sh"
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing sdkman...DONE!"

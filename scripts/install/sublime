@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing sublime..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # ESTOY EN LINUX
+    # https://easycloudsupport.zendesk.com/hc/en-us/articles/360006586972-Install-Sublime-Text-3-in-Ubuntu-16-04-Higher-The-Official-Way
+    if is_callable_from_path "subl"; then
+        log_info "\tsublime already installed" 
+    else 
+        sudo apt-get install sublime-text
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if is_callable_from_path "subl"; then
+        log_info "\tsublime already installed" 
+    else 
+        brew install --cask sublime-text
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing sublime...DONE!"

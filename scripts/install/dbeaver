@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+
+log_info "installing DBeaver..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if is_callable_from_path "dbeaver-ce"; then 
+        log_info "\tdbeaver already installed"
+    else 
+        sudo snap install dbeaver-ce
+    fi
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if [ -d "/Applications/DBeaver.app" ]; then
+        log_info "\tDBeaver already installed" 
+    elif is_apple_silicon; then
+        curl -L https://dbeaver.io/files/dbeaver-ce-latest-macos-aarch64.dmg -o dbeaver.dmg
+        sudo hdiutil attach -nobrowse dbeaver.dmg
+        cp -R /Volumes/DBeaver\ Community/DBeaver.app /Applications/
+        rm -rf dbeaver.dmg
+        sudo hdiutil detach /Volumes/DBeaver\ Community
+    else
+        brew install --cask dbeaver-community
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing DBeaver...DONE!"

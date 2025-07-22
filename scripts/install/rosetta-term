@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing rosetta-term"
+
+if [ "$(grep -c "rosetta-term*" $HOME/.zshrc)" -ge 1 ]; then 
+    log_info "\trosetta-term already installed"
+else
+    echo $'\n' >> $HOME/.zshrc
+    echo "alias rosetta-term='arch -x86_64 /System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal'" >> $HOME/.zshrc
+    source $HOME/.zshrc
+fi
+
+log_info "installing rosetta-term...DONE!"

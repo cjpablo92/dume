@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing nvm..."
+
+# TODO - workaround to be able to check if nvm is actually installed
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+ if is_callable_from_path "nvm"; then
+    log_info "\tnvm already installed" 
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "darwin"* ]]; then
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh -s | bash
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+
+
+log_info "installing nvm...DONE!"

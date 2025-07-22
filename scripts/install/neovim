@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing nvim..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if is_callable_from_path "nvim"; then
+        log_info "\tnvim already installed" 
+    else 
+        sudo add-apt-repository ppa:neovim-ppa/unstable
+        sudo apt-get update
+        sudo apt-get install neovim
+    fi    
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if is_callable_from_path "nvim"; then
+        log_info "\tnvim already installed" 
+    else 
+        brew install neovim
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing nvim...DONE!"

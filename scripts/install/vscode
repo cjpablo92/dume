@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing VSCode..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if is_callable_from_path "code"; then 
+        log_info "\tVSCode already installed"
+    else 
+        sudo snap install code --classic
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    # TODO: Check if VScode is already installed
+    if [ -d "/Applications/Visual Studio Code.app/" ]; then 
+        log_info "\tVSCode already installed"
+    else
+        brew install --cask visual-studio-code
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing VSCode...DONE!"

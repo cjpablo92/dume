@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing slack ..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if is_callable_from_path "slack"; then 
+        log_info "\tSlack already installed..."
+    else 
+        sudo snap install slack --classic
+    fi
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if [ -d "$HOME/Library/Application Support/Slack" ]; then
+        log_info "\tSlack already installed..."
+    else
+        brew install --cask slack
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing slack...DONE!"

@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+
+log_info "setting up workspace..."
+
+# create workspace folder
+DEFAULT_WORKSPACE="${HOME}/"
+workspace_path=$DEFAULT_WORKSPACE
+print_msg "write your workspace folder path and press enter (default: ${$DEFAULT_WORKSPACE})"
+read workspace_path
+mkdir -p $workspace_path
+cd $workspace_path
+log_info "setting up workspace...DONE!"
+
+log_info "checking git version..."
+# There are several ways to install Git on a Mac. 
+# The easiest is probably to install the Xcode Command Line Tools. 
+# On Mavericks (10.9) or above you can do this simply by trying to run git from the Terminal the very first time.
+git --version
+log_info "checking git version...DONE!"
+# clone repos
+log_info "clonning repos..."
+cat ../conf/clone_repos.conf | tr ' ' '\n' | xargs -n1 -L1 bash -c 'echo cloning repository $0... && git clone "git@github.com:$0.git"'
+log_info "clonning repos... DONE!"

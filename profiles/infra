@@ -1,0 +1,4 @@
+#include-profile:default
+aws
+kubectl
+tfswitch

@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing bundler..."
+
+if is_callable_from_path "bundler"; then 
+    log_info "\tbundler already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        gem install bundler
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        gem install bundler -v 2.1.4
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing bundler...DONE!"

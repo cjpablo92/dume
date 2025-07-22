@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing xcode..."
+
+if [ -d "/Applications/Xcode.app/" ]; then 
+    log_info "\txcode already installed"
+else 
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        gem install fastlane
+        # IMPORTANT: this step might need your apple developer credentials
+        fastlane run xcode_install version:13.1
+    else
+        log_error "Xcode cannot be installed in os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing xcode...DONE!"

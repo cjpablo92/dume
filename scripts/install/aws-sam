@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing aws-sam..."
+
+if is_callable_from_path "sam"; then 
+    log_info "\tsam already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        log_error "IMPLEMENT THIS FOR LINUX !!!"
+        exit 1
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install aws-sam-cli
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing aws-sam...DONE!"

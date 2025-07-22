@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing lens..."
+
+if is_callable_from_path "kontena-lens"; then 
+    log_info "\tlens already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        sudo snap install kontena-lens --classic
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install --cask lens
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing lens...DONE!"

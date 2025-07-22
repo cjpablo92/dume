@@ -1,0 +1,41 @@
+#!/bin/bash
+source ./libs/logger.sh
+
+
+log_info "installing python3 ..."
+
+# check if python3 is installed ...
+python3 --version  > /dev/null 2>&1;
+if [ $? -ne 0 ];  then
+    echo "\"python3\" not found ... Let me install it !"
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # for linux-gnu environments
+        sudo apt-get install python3
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # for macOS environments
+        brew install python3
+    else
+        log_error "\tunsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+
+# check if pip3 is installed ...
+python3 -m pip -h > /dev/null 2>&1
+if [ $? -ne 0 ];  then
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # for linux-gnu environments
+        sudo apt-get install python3-pip
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # for macOS environments
+        curl -O https://bootstrap.pypa.io/get-pip.py
+        sudo python3 get-pip.py
+        rm get-pip.py
+    else
+        log_error "\tunsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing python3 ... DONE!"

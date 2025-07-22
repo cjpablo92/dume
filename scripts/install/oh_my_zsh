@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+
+log_info "installing OhMyZsh..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    if [ -d "$HOME/.oh-my-zsh" ]; then
+        log_info "\tOhMyZsh already installed" 
+    else 
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        # https://hackernoon.com/customize-oh-my-zsh-with-syntax-highlighting-and-auto-suggestions-6q1b3w8o
+    fi
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    # TODO: setup highlighiting for oh my zsh, maybe post install?
+    if [ -d "$HOME/.oh-my-zsh" ]; then
+        log_info "\tOhMyZsh already installed" 
+    else 
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        # https://hackernoon.com/customize-oh-my-zsh-with-syntax-highlighting-and-auto-suggestions-6q1b3w8o
+    fi
+else
+    log_error "unsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing OhMyZsh...DONE!"

@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing swiftlint..."
+
+if is_callable_from_path "swiftlint"; then 
+    log_info "\tswiftlint already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        log_error "Not supported as a linux package: https://github.com/realm/SwiftLint/issues/732 !!!"
+        exit 1  
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install swiftlint 
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing swiftlint...DONE!"

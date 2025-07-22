@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing tfswitch..."
+
+if is_callable_from_path "tfswitch"; then 
+    log_info "\ttfswitch already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install warrensbox/tap/tfswitch=
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing tfswitch...DONE!"

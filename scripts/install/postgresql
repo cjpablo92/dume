@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing postgresql..."
+
+if is_callable_from_path "postgresql"; then 
+    log_info "\tpostgresql already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        sudo snap install postgresql
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install postgresql
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing postgresql...DONE!"

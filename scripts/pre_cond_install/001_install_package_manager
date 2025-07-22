@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing ( homebrew || apt update / snap )..."
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # LINUX
+    # TODO - slow for every run! maybe check "last update" someware ?
+    log_info "\tapt update will run on backgroud (check /tmp/apt_update.log for more info)" 
+    sudo echo ""
+    nohup sudo apt update > /tmp/apt_update.log 2>&1 &
+
+    # snap(d)
+    if [ $(ps aux|grep snapd | grep -v grep | wc -l) -gt 0 ];then 
+        log_info "\tsnapd already installed"
+    else
+        sudo apt install snapd
+    fi
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    if is_callable_from_path "brew"; then
+        log_info "\thomebrew already installed" 
+    elif is_apple_silicon; then
+        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        # Since macOS Catalina zsh is the default shell, so we'll set $PATH of homebrew in .zshrc file
+        # If by some reason you want to use bash or other shell env, you've got to switch it with chsh.
+        # Example
+        #       chsh -s /bin/bash
+        # After that, you've got to do add (or create) to .bashrc the 'eval' from next line
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zshrc
+        source $HOME/.zshrc
+    else
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+else
+    log_error "\tunsupported os: ($OSTYPE) !!!"
+    exit 1
+fi
+log_info "installing ( homebrew || apt update )... DONE!"

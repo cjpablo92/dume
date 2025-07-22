@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # MAC OS
+    log_info "installing iterm2..."
+    if [ -d "$HOME/Library/Application Support/iTerm2" ]; then
+        log_info "\titerm2 already installed..."
+    else
+        brew install --cask iterm2
+    fi
+    log_info "installing iterm2...DONE!"
+fi
+

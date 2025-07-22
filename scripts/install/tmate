@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing tmate..."
+
+if is_callable_from_path "tmate"; then 
+    log_info "\ttmate already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX UBUNTU
+        sudo apt-get install tmate
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install tmate
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing tmate...DONE!"

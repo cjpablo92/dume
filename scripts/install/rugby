@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing rugby..."
+
+if is_callable_from_path "rugby"; then 
+    log_info "\trugby already installed"
+else 
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install mint
+        mint install swiftyfinch/rugby
+        echo 'export PATH=$HOME/.mint/bin:$PATH' >> $HOME/.zshrc
+        export PATH=$HOME/.mint/bin:$PATH
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing rugby...DONE!"

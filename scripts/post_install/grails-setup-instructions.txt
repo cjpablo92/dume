@@ -1,0 +1,15 @@
+To setup the grails environment, run the following commands:
+
+1- Open the newly installed rosetta-term. This is a i386 mode terminal
+to be used with grails proyects
+
+rosetta-term
+
+2- On the opened terminal, run the following commands. This will setup
+the basic dependencies to build an run tests on mobile-services, for example:
+
+sdk install java 7.0.322-zulu
+sdk install groovy 2.1.9
+sdk install grails 2.3.11
+
+3- From now on, work on grails proyects using the rosetta-term terminal

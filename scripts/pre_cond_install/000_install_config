@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e # set error to propmt (set +e)
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "init config ..."
+
+mkdir -p $CONFIG_FOLDER
+mkdir -p $CONFIG_KEY_VALUE_FOLDER
+
+log_info "init config ... DONE!"

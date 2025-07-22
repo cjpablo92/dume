@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+pip3 install gdown
+gdown --id 1pxSEqXAzG-ILv1H1eRbNk3AygZ-sjz9v
+unzip -a m2.zip -d $HOME/.m2
+
+# cleanup
+rm m2.zip
+rm -rf .m2

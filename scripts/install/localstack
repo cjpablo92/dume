@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing localstack..."
+
+if is_callable_from_path "localstack"; then 
+    log_info "\tlocalstack already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "darwin"* ]]; then
+        python3 -m pip install localstack
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing localstack...DONE!"

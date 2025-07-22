@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+cat grails-setup-instructions.txt | more

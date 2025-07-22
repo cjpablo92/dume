@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+
+log_info "installing xcode-mockgenerator..."
+
+if [ -d "/Applications/Swift Mock Generator for Xcode.app/" ]; then 
+    log_info "\tXcode Mock Generator Tool is already installed"
+else 
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        curl -L https://github.com/seanhenry/SwiftMockGeneratorForXcode/releases/download/v1-beta.27/Swift.Mock.Generator.for.Xcode.dmg -o mockgenerator.dmg
+        sudo hdiutil attach -nobrowse mockgenerator.dmg
+        cp -R /Volumes/Swift\ Mock\ Generator\ for\ Xcode/Swift\ Mock\ Generator\ for\ Xcode.app /Applications/
+        rm -rf mockgenerator.dmg
+        sudo hdiutil detach /Volumes/Swift\ Mock\ Generator\ for\ Xcode/
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing xcode-mockgenerator...DONE!"
