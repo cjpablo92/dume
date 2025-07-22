@@ -8,6 +8,9 @@ SETUP_SCRIPT="$DUME_DIR/setup.sh"
 source "$DUME_DIR/libs/conf_manager.sh"
 source "$DUME_DIR/libs/logger.sh"
 
+# Enable verbose logging
+export VERBOSE=true
+
 # Validate that setup.sh exists
 if [[ ! -f "$SETUP_SCRIPT" ]]; then
     log_error "setup.sh not found in $DUME_DIR"
@@ -45,14 +48,14 @@ fi
 log_info "Installing dume to $TARGET_LINK"
 
 if ln -s "$SETUP_SCRIPT" "$TARGET_LINK" 2>/dev/null; then
-    log_success "✓ dume installed successfully!"
+    log_info "✓ dume installed successfully!"
     log_info "You can now run 'dume' from anywhere in your system"
     log_info "Try: dume -h"
 else
     # If symlink creation fails, try with sudo
     log_info "Permission denied. Trying with sudo..."
     if sudo ln -s "$SETUP_SCRIPT" "$TARGET_LINK"; then
-        log_success "✓ dume installed successfully with sudo!"
+        log_info "✓ dume installed successfully with sudo!"
         log_info "You can now run 'dume' from anywhere in your system"
         log_info "Try: dume -h"
     else
@@ -63,9 +66,9 @@ fi
 
 # Verify installation
 if command -v dume >/dev/null 2>&1; then
-    log_success "✓ Installation verified: dume is available in PATH"
+    log_info "✓ Installation verified: dume is available in PATH"
 else
-    log_warning "⚠ dume installed but not found in PATH. You may need to:"
+    log_warn "⚠ dume installed but not found in PATH. You may need to:"
     log_info "  - Restart your terminal session"
     log_info "  - Add $TARGET_DIR to your PATH in ~/.bashrc or ~/.zshrc"
 fi 
