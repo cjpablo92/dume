@@ -1,0 +1,40 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing chatgpt..."
+
+if is_callable_from_path "chatgpt"; then 
+    log_info "\tchatgpt desktop app already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        log_error "IMPLEMENT THIS FOR LINUX !!!"
+        exit 1
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install --cask chatgpt
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+if is_callable_from_path "chatgpt-cli"; then
+    log_info "\tchatgpt-cli already installed"
+else
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        log_error "IMPLEMENT THIS FOR LINUX !!!"
+        exit 1
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install chatgpt-cli
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing chatgpt...DONE!" 

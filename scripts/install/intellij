@@ -18,7 +18,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     if [ -d "/Applications/IntelliJ IDEA.app" ]; then
         log_info "\tintellij already installed" 
     else
-        brew install --cask intellij-idea
+        brew install --cask intellij-idea-ce
     fi
     
 else

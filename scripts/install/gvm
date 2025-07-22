@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing gvm..."
+
+if is_callable_from_path "gvm"; then 
+    log_info "\tgvm already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing gvm...DONE!" 

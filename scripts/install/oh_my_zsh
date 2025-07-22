@@ -9,18 +9,27 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         log_info "\tOhMyZsh already installed" 
     else 
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-        # https://hackernoon.com/customize-oh-my-zsh-with-syntax-highlighting-and-auto-suggestions-6q1b3w8o
     fi
+    # Install zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    # Install zsh-syntax-highlighting
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    # Enable plugins in .zshrc
+    sed -i 's/plugins=(/plugins=(zsh-autosuggestions zsh-syntax-highlighting /' $HOME/.zshrc
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     # MAC OS
-    # TODO: setup highlighiting for oh my zsh, maybe post install?
     if [ -d "$HOME/.oh-my-zsh" ]; then
         log_info "\tOhMyZsh already installed" 
     else 
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-        # https://hackernoon.com/customize-oh-my-zsh-with-syntax-highlighting-and-auto-suggestions-6q1b3w8o
     fi
+    # Install zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    # Install zsh-syntax-highlighting
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    # Enable plugins in .zshrc
+    sed -i '' 's/plugins=(/plugins=(zsh-autosuggestions zsh-syntax-highlighting /' $HOME/.zshrc
 else
     log_error "unsupported os: ($OSTYPE) !!!"
     exit 1

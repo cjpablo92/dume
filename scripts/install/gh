@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing gh..."
+
+if is_callable_from_path "gh"; then 
+    log_info "\tgh already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        log_error "IMPLEMENT THIS FOR LINUX !!!"
+        exit 1
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install gh
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing gh...DONE!" 

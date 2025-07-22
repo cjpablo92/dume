@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing gemini..."
+
+if is_callable_from_path "gemini"; then 
+    log_info "\tgemini CLI already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        npm install -g @google/gemini-cli
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        npm install -g @google/gemini-cli
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing gemini...DONE!" 

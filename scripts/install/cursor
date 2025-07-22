@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+source ./libs/logger.sh
+source ./libs/conf_manager.sh
+
+log_info "installing cursor..."
+
+if is_callable_from_path "cursor"; then 
+    log_info "\tcursor already installed"
+else 
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # LINUX
+        log_error "IMPLEMENT THIS FOR LINUX !!!"
+        exit 1
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # MAC OS
+        brew install --cask cursor
+        exit 1
+    else
+        log_error "unsupported os: ($OSTYPE) !!!"
+        exit 1
+    fi
+fi
+
+log_info "installing cursor...DONE!" 
