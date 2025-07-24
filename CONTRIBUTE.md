@@ -39,15 +39,26 @@ People *love* thorough bug reports. I'm not even kidding.
 ## How to add a new installation script
 
 To create a new installation script you need to run the following command:
-* ```./setup.sh -n <name of the script>```
+* ```dume -n <name of the script>```
+* Or locally: ```./setup.sh -n <name of the script>```
+
 It will automatically create a new file under de ./scripts/install path with the following content:
 
 ```sh
 #!/bin/bash
 set -e
-source ./libs/logger.sh
-source ./libs/conf_manager.sh
 
+# Get script directory for proper path resolution
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")/../.." && pwd)"
+
+source "$SCRIPT_DIR/libs/logger.sh"
+source "$SCRIPT_DIR/libs/conf_manager.sh"
 
 log_info "installing {{NAME}}..."
 
@@ -99,9 +110,40 @@ fi
 
 _NOTE: Check `./libs/conf_manager.sh` and the `./libs/logger.sh` files for more utility functions_
 
+## Testing Your Changes
+
+When contributing, make sure to test your changes in both environments:
+
+### Local Testing
+```bash
+./setup.sh -n test_script  # Create a test script
+./setup.sh -p your_profile # Test your profile locally
+```
+
+### Global Testing
+```bash
+dume -n test_script        # Test script creation globally
+dume -p your_profile       # Test your profile globally
+```
+
+Always ensure your scripts work correctly when run via the global symlink, as paths are resolved differently.
+
 ## How to add a new profile
 
-Just create a file inside the `/profiles/` directory with all the things you want to install. (See the available installation scripts by running `./setup -ls` or `./setup --list-scripts`)
+Just create a file inside the `/profiles/` directory with all the things you want to install. (See the available installation scripts by running `dume -ls` or `dume --list-scripts`)
+
+### Profile Dependencies
+
+You can include other profiles in your profile using the `#include-profile` directive:
+
+```
+#include-profile:default
+aws
+docker
+kubectl
+```
+
+This will install everything from the `default` profile plus the additional tools listed.
 
 ## How to make a profile automatically add env vars to my local environment
 

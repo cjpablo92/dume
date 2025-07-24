@@ -1,7 +1,17 @@
 #!/bin/bash
 set -e
-source ./libs/logger.sh
-source ./libs/conf_manager.sh
+
+# Get script directory for proper path resolution
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")/../.." && pwd)"
+
+source "$SCRIPT_DIR/libs/logger.sh"
+source "$SCRIPT_DIR/libs/conf_manager.sh"
 
 
 log_info "installing {{NAME}}..."

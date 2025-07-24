@@ -27,14 +27,49 @@
 
 ## How To Use
 
-Installation (onboarding main feature)
-* ```./setup.sh --help```
+### Installation
 
-Manage config 
-* ```./config.sh --help```
+First, make dume available globally on your system:
+```bash
+./install.sh
+```
 
-Package 
-* ```./package.sh```
+This creates a symlink in your PATH so you can run `dume` from anywhere.
+
+### Quick Start
+
+View available options:
+```bash
+dume --help
+# or locally: ./setup.sh --help
+```
+
+List available profiles:
+```bash
+dume -lp
+```
+
+Install a development environment:
+```bash
+dume -p fullstack
+```
+
+List all available scripts:
+```bash
+dume -ls
+```
+
+### Other Utilities
+
+Manage config:
+```bash
+./config.sh --help
+```
+
+Package the project:
+```bash
+./package.sh
+```
 
 ## Documentation
 Project structure
@@ -43,10 +78,15 @@ Project structure
 .
 ├── assets                    # Assets or static files to use on the project
 │   └── welcome_ascii         # Ascii to load as welcome logo
+├── env                       # Environment variable files for profiles
+│   └── ...
+├── github                    # GitHub repository lists for profiles
+│   └── ...
 ├── libs                      # Libraries or utilities to use within the project
 │   ├── conf_manager.sh       # Functions to use within the project
 │   └── logger.sh             # Logger functions
 ├── profiles                  # Profile files to store pre-built environments based on the role
+│   └── ...                   # Profile list
 ├── scripts                   # All the available installation scripts stored by stage (pre-install, install, post-install, etc)
 │   ├── custom                # This are custom installation utilities (E.G: cheats, etc)
 │   │   ├── cheats
@@ -60,12 +100,13 @@ Project structure
 │   │   ├── python
 │   │   ├── homebrew
 │   │   └── ...
-│   └── __template__.sh       # Template to bootstrap a new installable (`./setup.sh -n my_cool_installation_script`)
+│   └── __template__.sh       # Template to bootstrap a new installable (`dume -n my_cool_installation_script`)
 ├── config.sh                 # Utility to manage config flags locally (still in beta)
 ├── CONTRIBUTE.md             # Contribution guide
+├── install.sh                # Installation script to make dume globally available
 ├── package.sh                # Utility to package the app (generate a .gz file)
 ├── README.md                 # Readme
-└── setup.sh                  # Main entry point of the app (`./setup.sh -h`)
+└── setup.sh                  # Main entry point of the app (`dume -h` or `./setup.sh -h`)
 ```
 
 ## Contribute
