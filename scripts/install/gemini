@@ -10,10 +10,11 @@ if is_callable_from_path "gemini"; then
 else 
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         # LINUX
-        npm install -g @google/gemini-cli
+        log_error "IMPLEMENT THIS FOR LINUX !!!"
+        exit 1
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         # MAC OS
-        npm install -g @google/gemini-cli
+        brew install gemini-cli
     else
         log_error "unsupported os: ($OSTYPE) !!!"
         exit 1

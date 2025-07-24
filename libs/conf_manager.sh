@@ -147,7 +147,14 @@ export -f key_value_reset
 # --------------- GUI helpers ---------------
 
 function gui_print_welcome {
-    echo -e "" && cat ./assets/welcome_ascii && echo -e "${normal}"
+    SOURCE="${BASH_SOURCE[0]}"
+    while [ -L "$SOURCE" ]; do
+      DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+      SOURCE="$(readlink "$SOURCE")"
+      [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+    done
+    SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")/.." && pwd)"
+    echo -e "" && cat "$SCRIPT_DIR/assets/welcome_ascii" && echo -e "${normal}"
 }
 
 

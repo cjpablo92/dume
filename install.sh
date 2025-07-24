@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# Get the current directory (where dume is located)
-DUME_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+DUME_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 SETUP_SCRIPT="$DUME_DIR/setup.sh"
 
 # Source the configuration manager to get path variables

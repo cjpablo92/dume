@@ -1,7 +1,14 @@
 #!/bin/bash
 
-source ./libs/logger.sh
-source ./libs/conf_manager.sh
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+source "$SCRIPT_DIR/libs/logger.sh"
+source "$SCRIPT_DIR/libs/conf_manager.sh"
 
 gui_print_welcome
 
@@ -64,17 +71,17 @@ function print_usage {
 
 function print_profiles {
     print_title "${bold}AVAILABLE PROFILES${normal}"
-    ls profiles | sort
+    ls "$SCRIPT_DIR/profiles" | sort
 }
 
 function print_installables {
     print_title "${bold}AVAILABLE INSTALLABLES${normal}"
-    ls "scripts/install" | sort
+    ls "$SCRIPT_DIR/scripts/install" | sort
 }
 
 function print_scripts {
     print_title "${bold}AVAILABLE SCRIPTS${normal}"
-    ls "scripts/custom" | sort
+    ls "$SCRIPT_DIR/scripts/custom" | sort
     echo ""
     print_installables
     echo ""
@@ -96,12 +103,12 @@ function check_profile {
     check_param $1
 
     if [[ "$1" == "custom" ]]; then
-        ls "scripts/install" | sort >> ./profiles/custom
-        vi ./profiles/custom
+        ls "$SCRIPT_DIR/scripts/install" | sort >> "$SCRIPT_DIR/profiles/custom"
+        vi "$SCRIPT_DIR/profiles/custom"
     fi
 
     # check existence 
-    if [ ! -f "./profiles/$1" ];then 
+    if [ ! -f "$SCRIPT_DIR/profiles/$1" ];then 
         echo -e "invalid profile: \"$1\" (check -h option for help)"                        
         exit 1
     fi
@@ -127,8 +134,8 @@ function menu {
                     shift
 
                     # TODO - FIXME 
-                    cat ./scripts/__template__.sh | sed s/'{{NAME}}'/"$script_to_create"/g > ./scripts/install/$script_to_create
-                    chmod +x ./scripts/install/$script_to_create
+                    cat "$SCRIPT_DIR/scripts/__template__.sh" | sed s/'{{NAME}}'/"$script_to_create"/g > "$SCRIPT_DIR/scripts/install/$script_to_create"
+                    chmod +x "$SCRIPT_DIR/scripts/install/$script_to_create"
                     ;;   
                 -h| --help) 
                     print_usage             
@@ -143,7 +150,7 @@ function menu {
                     profile="$2"
                     check_profile $profile
                     print_title "${bold}PROFILE DETAIL${normal}"
-                    cat "./profiles/$profile"
+                    cat "$SCRIPT_DIR/profiles/$profile"
                     echo ""
                     exit 0
                     ;;
@@ -166,7 +173,7 @@ function menu {
     else 
         # pre-cond-install
         log_info "----> Installing pre conditions ..."
-        ls ./scripts/pre_cond_install | xargs -n1 bash -c './scripts/pre_cond_install/$0'
+        ls "$SCRIPT_DIR/scripts/pre_cond_install" | xargs -n1 bash -c '"$SCRIPT_DIR/scripts/pre_cond_install/$0"'
         log_info "----> Installing pre conditions ... DONE!"
         echo ""
 
@@ -174,25 +181,25 @@ function menu {
         log_info "----> Installing ..."
 
         # (for included profiles scripts)
-        includes_count=$(cat "./profiles/$profile" | grep '#include-profile' | wc -l)
+        includes_count=$(cat "$SCRIPT_DIR/profiles/$profile" | grep '#include-profile' | wc -l)
         if [ $includes_count -gt 0 ];then
-            for include_profile in $(cat "./profiles/$profile" | grep '#include-profile' | cut -d: -f2); do 
+            for include_profile in $(cat "$SCRIPT_DIR/profiles/$profile" | grep '#include-profile' | cut -d: -f2); do 
                 # log_info "\t [installing included profile] - $include_profile ..."
 
                     # check existence 
-                    if [ ! -f "./profiles/$include_profile" ];then 
+                    if [ ! -f "$SCRIPT_DIR/profiles/$include_profile" ];then 
                         log_error "invalid include profile: \"$include_profile\" (check parent profile: $profile)"                        
                         exit 1
                     fi
 
-                cat "./profiles/$include_profile" | grep -v '#include-profile' | sort | xargs -n1 bash -c './scripts/install/$0'
+                cat "$SCRIPT_DIR/profiles/$include_profile" | grep -v '#include-profile' | sort | xargs -n1 bash -c '"$SCRIPT_DIR/scripts/install/$0"'
 
                 # log_info "\t [installing included profile] - $include_profile ... DONE!"
             done
         fi
 
         # (for own scripts)
-        cat "./profiles/$profile" | grep -v '#include-profile' | sort | xargs -n1 bash -c './scripts/install/$0'
+        cat "$SCRIPT_DIR/profiles/$profile" | grep -v '#include-profile' | sort | xargs -n1 bash -c '"$SCRIPT_DIR/scripts/install/$0"'
         log_info "----> Installing ... DONE!"
         echo ""
         
@@ -201,29 +208,23 @@ function menu {
         echo ""
 
         # (for included profiles scripts)
-        includes_count=$(cat "./profiles/$profile" | grep '#include-profile' | wc -l)
-        if [ $includes_count -gt 0 ];then
-            for include_profile in $(cat "./profiles/$profile" | grep '#include-profile' | cut -d: -f2); do 
-                # log_info "\t [post-installing included profile] - $include_profile ..."
-
-                ls scripts/post_install | xargs -n1 -L1 bash -c 'grep $0 -o ./profiles/'$include_profile | 
-                    xargs -n1 -L1 bash -c '[[ -f "./scripts/post_install/$0" ]] && ./scripts/post_install/$0; echo ""'
-
-                # log_info "\t [post-installing included profile] - $include_profile ... DONE!"
+        includes_count=$(cat "$SCRIPT_DIR/profiles/$profile" | grep '#include-profile' | wc -l)
+        if [ $includes_count -gt 0 ]; then
+            for include_profile in $(cat "$SCRIPT_DIR/profiles/$profile" | grep '#include-profile' | cut -d: -f2); do 
+                ls "$SCRIPT_DIR/scripts/post_install" | xargs -n1 -L1 bash -c 'grep $0 -o "$SCRIPT_DIR/profiles/'$include_profile'"' | xargs -n1 -L1 bash -c '[[ -f "$SCRIPT_DIR/scripts/post_install/$0" ]] && "$SCRIPT_DIR/scripts/post_install/$0"; echo ""'
             done
         fi
 
         # (for specific scripts)        
-        ls scripts/post_install | xargs -n1 -L1 bash -c 'grep $0 -o ./profiles/'$profile |
-        xargs -n1 -L1 bash -c '[[ -f "./scripts/post_install/$0" ]] && ./scripts/post_install/$0; echo ""'
+        ls "$SCRIPT_DIR/scripts/post_install" | xargs -n1 -L1 bash -c 'grep $0 -o "$SCRIPT_DIR/profiles/'$profile'"' | xargs -n1 -L1 bash -c '[[ -f "$SCRIPT_DIR/scripts/post_install/$0" ]] && "$SCRIPT_DIR/scripts/post_install/$0"; echo ""'
 
         # (for "cond" scripts)
-        ls ./scripts/post_cond_install | xargs -n1 bash -c './scripts/post_cond_install/$0; echo ""'
+        ls "$SCRIPT_DIR/scripts/post_cond_install" | xargs -n1 bash -c '"$SCRIPT_DIR/scripts/post_cond_install/$0"; echo ""'
         log_info "----> Post install actions ... DONE!"
 
         # ----- install custom scripts -----
         log_info "----> Installing custom scripts ..."
-        ls ./scripts/custom | xargs -n1 -L1 bash -c 'force_install_script "./scripts/custom/$0"'
+        ls "$SCRIPT_DIR/scripts/custom" | xargs -n1 -L1 bash -c 'force_install_script "$SCRIPT_DIR/scripts/custom/$0"'
         log_info "----> Installing custom scripts ... DONE!"
         echo ""
 
@@ -231,15 +232,15 @@ function menu {
         log_info "----> Copying ENV VARS ..."
         if [ -f "$HOME/.zshrc" ];then 
             log_info "Copying env vars to .zshrc"
-            cat "./env/$profile" >> "$HOME/.zshrc"
+            cat "$SCRIPT_DIR/env/$profile" >> "$HOME/.zshrc"
         else
-            if [! -f "$HOME/.bashrc" ];then 
+            if [ ! -f "$HOME/.bashrc" ];then 
                 log_info ".bashrc not found creating the file"
                 touch "$HOME/.bashrc"
                 log_info ".bashrc created"
             fi
             log_info "Copying env vars to .bashrc"
-            cat "./env/$profile" >> "$HOME/.bashrc"
+            cat "$SCRIPT_DIR/env/$profile" >> "$HOME/.bashrc"
         fi
         log_info "----> Copying ENV VARS ...DONE!"
         echo ""
@@ -250,8 +251,8 @@ function menu {
         mkdir -p "$HOME/github"
         log_info "----> Creating Github working dir ... DONE!"
         log_info "----> Cloning Github repositories ..."
-        if [ -f "./github/$profile" ];then 
-            cat "./github/$profile" | sort | xargs -n1 bash -c 'git clone https://github.com/$0 $HOME/github/$0'
+        if [ -f "$SCRIPT_DIR/github/$profile" ];then 
+            cat "$SCRIPT_DIR/github/$profile" | sort | xargs -n1 bash -c 'git clone https://github.com/$0 $HOME/github/$0'
         else
             log_info "No repos to clone skipping step"
         fi
